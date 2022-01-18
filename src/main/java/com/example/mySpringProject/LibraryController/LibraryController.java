@@ -12,7 +12,7 @@ public interface LibraryController {
     String welcome();
 
     @PostMapping("/addBook")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     void addBook(@RequestParam String title, @RequestParam String contents);
 
     @DeleteMapping("/removeBook")

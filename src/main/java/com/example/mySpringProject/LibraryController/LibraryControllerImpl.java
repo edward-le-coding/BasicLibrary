@@ -35,9 +35,14 @@ public class LibraryControllerImpl implements LibraryController {
     }
 
     // Removes book from library by title
+    // Returns not found error if book was not in library already
     @Override
     public void removeBook(String title) {
-        this.library.remove(title);
+        if(this.library.containsKey(title)) {
+            this.library.remove(title);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Get single book's content, by title

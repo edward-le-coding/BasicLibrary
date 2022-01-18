@@ -60,13 +60,12 @@ class LibraryControllerTest {
         // Put book into library
         MockHttpServletResponse postResponseAfterOneBookAdded = mvc.perform(
                         post("/library/addBook?title=" + title1 + "&contents=" + content1))
+                .andExpect(status().isCreated())
                 .andReturn().getResponse();
-        assertThat(postResponseAfterOneBookAdded.getStatus()).isEqualTo(HttpStatus.OK.value());
         // Check that book is within library
         MockHttpServletResponse getResponseAfterOneBookAdded = mvc.perform(get("/library/getBook?title=" + title1))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
-        assertThat(getResponseAfterOneBookAdded.getContentAsString()).isEqualTo(content1);
         // Remove book
         mvc.perform(delete("/library/removeBook?title=" + title1))
                 .andExpect(status().isOk());
@@ -79,7 +78,6 @@ class LibraryControllerTest {
     void removeBookFailure() throws Exception {
         // Check that book (not added) is not in the library
         String title1 = "Hello";
-
         mvc.perform(get("/library/getBook?title=" + title1))
                 .andExpect(status().isNotFound());
     }
@@ -98,10 +96,10 @@ class LibraryControllerTest {
         sort(titles);
         // Put first book into library
         mvc.perform(post("/library/addBook?title=" + title1 + "&contents=" + content1))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         // Put second book into library
         mvc.perform(post("/library/addBook?title=" + title2 + "&contents=" + content2))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         // Get all books
         MockHttpServletResponse getAllBooksResponse = mvc.perform(get("/library/getAllBooks"))
                 .andExpect(status().isOk())
