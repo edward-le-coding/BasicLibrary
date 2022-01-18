@@ -28,7 +28,7 @@ public class LibraryControllerImpl implements LibraryController {
         return "Welcome to the library!";
     }
 
-    // Adds book from library by title and coontents
+    // Adds book from library by title and contents
     @Override
     public void addBook(String title, String contents) {
         this.library.put(title,contents);
