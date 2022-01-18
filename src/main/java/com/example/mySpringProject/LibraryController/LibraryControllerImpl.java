@@ -1,54 +1,75 @@
 package com.example.mySpringProject.LibraryController;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import static java.util.Collections.sort;
 
 @RestController
 @RequestMapping("/library")
 public class LibraryControllerImpl implements LibraryController {
     // Key = title
     // Value = contents
-    private HashMap library;
+    private HashMap<String, String> library;
 
-    void LibraryController(){
-        library = new HashMap();
+    public LibraryControllerImpl(){
+        this.library = new HashMap<String, String>();
     }
-
+    // Prints welcome message from library
     @Override
     public String welcome() {
         return "Welcome to the library!";
     }
 
+    // Adds book from library by title and coontents
     @Override
     public void addBook(String title, String contents) {
-        library.put(title,contents);
+        this.library.put(title,contents);
     }
 
+    // Removes book from library by title
     @Override
     public void removeBook(String title) {
-        library.remove(title);
+        this.library.remove(title);
     }
 
+    // Get single book's content, by title
     @Override
     public String getBook(String title) {
-        String contents = (String) library.get(title);
-        return contents;
+        Optional<String> bookContents = Optional.ofNullable(this.library.get(title));
+        if (!bookContents.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return bookContents.get();
     }
 
+    // Get all books in library
+    // Will sort books by alphabetical order
     @Override
     public List<String> getBooksInLibrary() {
         // Create list
-        List<String> booksInLibrary = new ArrayList<String>();
+        List<String>booksInLibrary = new ArrayList<String>();
+
+        // See if library has any books; exit if no books
+        if(this.library.keySet().size() == 0){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
         // Loop over list, add titles
-        for(Object title : library.keySet()){
-            String titleString = (String) title;
+        for (String title : this.library.keySet()) {
+            String titleString = title;
             booksInLibrary.add(titleString);
         }
+        // Sort List
+        sort(booksInLibrary);
+
         // Return list
         return booksInLibrary;
     }
