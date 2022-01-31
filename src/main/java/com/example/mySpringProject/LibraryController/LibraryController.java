@@ -18,6 +18,7 @@ public interface LibraryController {
     @PutMapping("/updateBookContents")
     @ResponseStatus(HttpStatus.OK)
     void updateBookContents(@RequestParam String title, @RequestParam String newContents);
+
     @DeleteMapping("/removeBook")
     @ResponseStatus(HttpStatus.OK)
     void removeBook(@RequestParam String title);
