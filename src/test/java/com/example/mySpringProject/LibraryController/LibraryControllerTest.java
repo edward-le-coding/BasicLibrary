@@ -5,6 +5,7 @@ import org.apache.tomcat.jni.Library;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -47,7 +48,7 @@ class LibraryControllerTest {
     void testWelcomeMessage() throws Exception {
         String welcomeMessage = "Welcome to the library!";
         MockHttpServletResponse welcomeResponse = mvc.perform(
-                        get("/library"))
+                get("/library"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertThat(welcomeResponse.getContentAsString()).isEqualTo(welcomeMessage);
@@ -59,13 +60,52 @@ class LibraryControllerTest {
         String content1 = "World";
         // Put book into library
         MockHttpServletResponse postResponseAfterOneBookAdded = mvc.perform(
-                        post("/library/addBook?title=" + title1 + "&contents=" + content1))
+                post("/library/addBook?title=" + title1 + "&contents=" + content1))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse();
         // Check that book is within library
-        MockHttpServletResponse getResponseAfterOneBookAdded = mvc.perform(get("/library/getBook?title=" + title1))
+        MockHttpServletResponse getResponseAfterOneBookAdded = mvc.perform(
+                get("/library/getBook?title=" + title1))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
+        // Check contents are correct
+        String bookContents = getResponseAfterOneBookAdded.getContentAsString();
+        assertThat(bookContents).isEqualTo(content1);
+        // Remove book
+        mvc.perform(delete("/library/removeBook?title=" + title1))
+                .andExpect(status().isOk());
+        // Check that book was removed
+        mvc.perform(get("/library/getBook?title=" + title1))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void addBookUpdateBookRemoveBookSuccess() throws Exception {
+        String title1 = "Hello";
+        String content1 = "World";
+        String content2 = "New content";
+        // Put book into library
+        MockHttpServletResponse postResponseAfterOneBookAdded = mvc.perform(
+                post("/library/addBook?title=" + title1 + "&contents=" + content1))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse();
+        // Check that book is within library
+        MockHttpServletResponse getResponseAfterOneBookAdded = mvc.perform(
+                get("/library/getBook?title=" + title1))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        // Update book
+        MockHttpServletResponse getResponseAfterUpdateBook = mvc.perform(
+                put("/library/updateBookContents?title=" + title1 + "&newContents=" + content2))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        // Check Book is updated
+        MockHttpServletResponse getResponseAfterGettingUpdatedBook = mvc.perform(
+                get("/library/getBook?title=" + title1))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        String updatedContents = getResponseAfterGettingUpdatedBook.getContentAsString();
+        // Check contents updated correctly
+        assertThat(updatedContents).isEqualTo(content2);
         // Remove book
         mvc.perform(delete("/library/removeBook?title=" + title1))
                 .andExpect(status().isOk());
@@ -75,10 +115,20 @@ class LibraryControllerTest {
     }
 
     @Test
+    void updateBookFailure() throws Exception{
+        // Check that book (not added) is not updated
+        String title1 = "Hello";
+        String content1 = "Byeee";
+        mvc.perform(
+                put("/library/updateBookContents?title=" + title1 + "&newContents=" + content1))
+                .andExpect(status().isNotFound());
+    }
+    @Test
     void removeBookFailure() throws Exception {
         // Check that book (not added) is not in the library
         String title1 = "Hello";
-        mvc.perform(get("/library/getBook?title=" + title1))
+        mvc.perform(
+                get("/library/getBook?title=" + title1))
                 .andExpect(status().isNotFound());
     }
 
@@ -95,13 +145,16 @@ class LibraryControllerTest {
         // Sort titles for consistency
         sort(titles);
         // Put first book into library
-        mvc.perform(post("/library/addBook?title=" + title1 + "&contents=" + content1))
+        mvc.perform(
+                post("/library/addBook?title=" + title1 + "&contents=" + content1))
                 .andExpect(status().isCreated());
         // Put second book into library
-        mvc.perform(post("/library/addBook?title=" + title2 + "&contents=" + content2))
+        mvc.perform(
+                post("/library/addBook?title=" + title2 + "&contents=" + content2))
                 .andExpect(status().isCreated());
         // Get all books
-        MockHttpServletResponse getAllBooksResponse = mvc.perform(get("/library/getAllBooks"))
+        MockHttpServletResponse getAllBooksResponse = mvc.perform(
+                get("/library/getAllBooks"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         // Ensure both books are there
@@ -114,13 +167,16 @@ class LibraryControllerTest {
         }
         assertThat(responseList).isEqualTo(titles);
         // Remove first book
-        mvc.perform(delete("/library/removeBook?title=" + title1))
+        mvc.perform(
+                delete("/library/removeBook?title=" + title1))
                 .andExpect(status().isOk());
         // Remove second book
-        mvc.perform(delete("/library/removeBook?title=" + title2))
+        mvc.perform(
+                delete("/library/removeBook?title=" + title2))
                 .andExpect(status().isOk());
         // Get all books, expect none
-        MockHttpServletResponse getAllBooksResponseExpectNone = mvc.perform(get("/library/getAllBooks"))
+        MockHttpServletResponse getAllBooksResponseExpectNone = mvc.perform(
+                get("/library/getAllBooks"))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertThat(getAllBooksResponseExpectNone.getContentAsByteArray()).isEmpty();
