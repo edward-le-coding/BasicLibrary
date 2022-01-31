@@ -5,18 +5,23 @@ Based on lessions from Codecademy
 
 Possible Calls: 
 
-- /library/addBook?title=<title>&contents=<contents>
+- Post: /library/addBook?title=<title>&contents=<contents>
   Adds book to the library
   Title: Title of the book
-  Contents: Cntents of the book
+  Contents: Contents of the book
+
+- Put: /library/updateBookContents?title=<title>&newContents=<contents>
+  Updates contents of a book
+  Title: Title of the book 
+  NewContents: New book contents
   
-- /library/removeBook?title=<title>
-  Removes book from the library
-  Title: Title of the book
-  
-- /library/getBook?title=<title>
+- Get: /library/getBook?title=<title>
   Gets the cotnents of a book in the library
   Title: Title of the book
 
-- /library/getAllBooks
+- Get: /library/getAllBooks
   Returns all books in the library
+  
+- Delete: /library/removeBook?title=<title>
+  Removes book from the library
+  Title: Title of the book
