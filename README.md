@@ -1,7 +1,7 @@
 # BasicLibrary
 BasicLibrary is a toy Java Spring Boot application that attempts to implement some basic calls to post, put, get, and delete objects within a library. 
 
-Based on lessions from Codecademy
+Based on lessons from Codecademy's Spring Course (https://www.codecademy.com/learn/learn-spring)
 
 ## Possible Calls: 
 ### Welcome:
