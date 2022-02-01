@@ -123,14 +123,24 @@ class LibraryControllerTest {
                 put("/library/updateBookContents?title=" + title1 + "&newContents=" + content1))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void getAllBookFailure() throws Exception {
+        // Check if getting all books (empty library) fails
+        mvc.perform(
+                get("/library/getAllBooks"))
+                .andExpect(status().isNotFound());
+
+    }
     @Test
     void removeBookFailure() throws Exception {
-        // Check that book (not added) is not in the library
+        // Check that book (not added) cannot be removed
         String title1 = "Hello";
         mvc.perform(
-                get("/library/getBook?title=" + title1))
+                delete("/library/removeBook?title=" + title1))
                 .andExpect(status().isNotFound());
     }
+
 
     @Test
     void add2BooksGetAllBooksRemoveAllBooks() throws Exception {
