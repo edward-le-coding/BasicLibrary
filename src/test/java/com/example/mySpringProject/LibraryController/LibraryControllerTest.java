@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(LibraryController.class)
 class LibraryControllerTest {
     private LibraryController libraryController;
+
     @Autowired
     private MockMvc mvc;
 
@@ -44,6 +45,7 @@ class LibraryControllerTest {
         // Set up concrete library controller instance
         libraryController = new LibraryControllerImpl();
     }
+
     @Test
     void testWelcomeMessage() throws Exception {
         String welcomeMessage = "Welcome to the library!";
@@ -78,6 +80,7 @@ class LibraryControllerTest {
         mvc.perform(get("/library/getBook?title=" + title1))
                 .andExpect(status().isNotFound());
     }
+
     @Test
     void addBookUpdateBookRemoveBookSuccess() throws Exception {
         String title1 = "Hello";
@@ -132,6 +135,7 @@ class LibraryControllerTest {
                 .andExpect(status().isNotFound());
 
     }
+
     @Test
     void getBookFailure() throws Exception {
         // Check that book (not added) cannot be retrieved
@@ -140,6 +144,7 @@ class LibraryControllerTest {
                         get("/library/getBook?title=" + title1))
                 .andExpect(status().isNotFound());
     }
+
     @Test
     void removeBookFailure() throws Exception {
         // Check that book (not added) cannot be removed
@@ -148,7 +153,6 @@ class LibraryControllerTest {
                 delete("/library/removeBook?title=" + title1))
                 .andExpect(status().isNotFound());
     }
-
 
     @Test
     void add2BooksGetAllBooksRemoveAllBooks() throws Exception {
