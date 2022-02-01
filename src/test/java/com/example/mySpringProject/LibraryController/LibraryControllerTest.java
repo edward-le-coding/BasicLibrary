@@ -133,6 +133,14 @@ class LibraryControllerTest {
 
     }
     @Test
+    void getBookFailure() throws Exception {
+        // Check that book (not added) cannot be retrieved
+        String title1 = "Hello";
+        mvc.perform(
+                        get("/library/getBook?title=" + title1))
+                .andExpect(status().isNotFound());
+    }
+    @Test
     void removeBookFailure() throws Exception {
         // Check that book (not added) cannot be removed
         String title1 = "Hello";
