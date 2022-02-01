@@ -57,7 +57,43 @@ class LibraryControllerTest {
     }
 
     @Test
-    void addBookandRemoveBookSuccess() throws Exception {
+    void getBookFailure() throws Exception {
+        // Check that book (not added) cannot be retrieved
+        String title1 = "Hello";
+        mvc.perform(
+                        get("/library/getBook?title=" + title1))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAllBookFailure() throws Exception {
+        // Check if getting all books (empty library) fails
+        mvc.perform(
+                        get("/library/getAllBooks"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void removeBookFailure() throws Exception {
+        // Check that book (not added) cannot be removed
+        String title1 = "Hello";
+        mvc.perform(
+                        delete("/library/removeBook?title=" + title1))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateBookFailure() throws Exception{
+        // Check that book (not added) is not updated
+        String title1 = "Hello";
+        String content1 = "Byeee";
+        mvc.perform(
+                        put("/library/updateBookContents?title=" + title1 + "&newContents=" + content1))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void addBookAndRemoveBookSuccess() throws Exception {
         String title1 = "Hello";
         String content1 = "World";
         // Put book into library
@@ -118,43 +154,6 @@ class LibraryControllerTest {
     }
 
     @Test
-    void updateBookFailure() throws Exception{
-        // Check that book (not added) is not updated
-        String title1 = "Hello";
-        String content1 = "Byeee";
-        mvc.perform(
-                put("/library/updateBookContents?title=" + title1 + "&newContents=" + content1))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void getAllBookFailure() throws Exception {
-        // Check if getting all books (empty library) fails
-        mvc.perform(
-                get("/library/getAllBooks"))
-                .andExpect(status().isNotFound());
-
-    }
-
-    @Test
-    void getBookFailure() throws Exception {
-        // Check that book (not added) cannot be retrieved
-        String title1 = "Hello";
-        mvc.perform(
-                        get("/library/getBook?title=" + title1))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void removeBookFailure() throws Exception {
-        // Check that book (not added) cannot be removed
-        String title1 = "Hello";
-        mvc.perform(
-                delete("/library/removeBook?title=" + title1))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     void add2BooksGetAllBooksRemoveAllBooks() throws Exception {
         String title1 = "Hello";
         String title2 = "All";
@@ -182,7 +181,7 @@ class LibraryControllerTest {
         // Ensure both books are there
         JSONArray getAllBooksMultiBookResponseArray =  new JSONArray(getAllBooksResponse.getContentAsString());
         List<String> responseList = new ArrayList<String>();
-        // Add JSON array concents to responseList for testing
+        // Add JSON array contents to responseList for testing
         for (int i = 0; i < getAllBooksMultiBookResponseArray.length(); i++){
             String currString = getAllBooksMultiBookResponseArray.get(i).toString();
             responseList.add(currString);
